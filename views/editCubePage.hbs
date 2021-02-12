@@ -1,0 +1,64 @@
+<h1>Edit Cube</h1>
+<div class="form">
+    <h2>{{cube.name}}</h2>
+    <img class="cube" src={{cube.imageUrl}}>
+    <form action='/accessory/attach/{{cube._id}}' method="POST">
+        {{#if dropdownAccessories}}
+            <label for="accessory">Accessories</label>
+            <select id="accessory" name="accessory">
+
+                <!-- insert list of accessories not including those already attached to the cube -->
+                {{#each dropdownAccessories}}
+                    <option value={{_id}}>{{name}}</option>
+                {{/each}}
+
+            </select>
+            <input type="submit" value="Attach">
+        {{else}}
+            <div class="details">
+                <h2 align="center">This cube has all the accessories!</h2>
+            </div>
+            
+        {{/if}}
+    </form>
+    {{#if cube.accessories}}
+    <h2>Attached Accessories:</h2>
+    <ul>
+        {{#each cube.accessories}}
+        <li><h3>{{name}}</h3></li>
+        {{/each}}
+    </ul>
+    {{else}}
+        {{#if dropdownAccessories}}
+            <!--if accessories are available to add -->
+            <h3 class="italic">No accessories added yet</h3>
+        {{else}}
+            <!--no accessories attached and none in the dropdown -->
+            <h3 class="italic">You need to add accessories first!</h3>
+        {{/if}}
+    {{/if}}
+    
+    <a class="btn" href="/">Back</a>
+</div>
+
+
+<div class="form">
+  <form action='/edit/{{cube._id}}' method="POST">
+    <label for="name">Name</label>
+    <input type="text" id="name" name="name" value={{cube.name}}>
+    <label for="name">Description</label>
+    <textarea id="name" name="description">{{cube.description}}</textarea>
+    <label for="image">ImageUrl</label>
+    <input type="text" id="image" name="imageUrl" value={{cube.imageUrl}}>
+    <label for="difficulty">Difficulty</label>
+    <select id="difficulty" name="difficultyLevel">
+      <option value="1" {{#if (isEqual 1 cube.difficulty)}} selected {{/if}}>1 - Very Easy</option>
+      <option value="2"{{#if (isEqual 2 cube.difficulty)}} selected {{/if}}>2 - Easy</option>
+      <option value="3" {{#if (isEqual 3 cube.difficulty)}} selected {{/if}}>3 - Medium (Standard 3x3)</option>
+      <option value="4" {{#if (isEqual 4 cube.difficulty)}} selected {{/if}}>4 - Intermediate</option>
+      <option value="5" {{#if (isEqual 5 cube.difficulty)}} selected {{/if}}>5 - Expert</option>
+      <option value="6" {{#if (isEqual 6 cube.difficulty)}} selected {{/if}}>6 - Hardcore</option>
+    </select>
+    <input type="submit" value="Edit">
+  </form>
+</div>

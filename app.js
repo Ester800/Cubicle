@@ -3,7 +3,7 @@ var express = require('express');
 var path = require('path');
 var cookieParser = require('cookie-parser');
 var logger = require('morgan');
-var hbs = require('hbs');
+const hbs = require('hbs');
 const mongoose = require('mongoose');
 
 const passport = require('passport');
@@ -27,6 +27,9 @@ var detailsRouter = require('./routes/details');
 var editRouter = require('./routes/edit');
 var deleteRouter = require('./routes/delete');
 var cookieRouter = require('./routes/cookie');
+var registerRouter = require('./routes/register');
+var loginRouter = require('./routes/login');
+var logoutRouter = require('./routes/logout');
 
 // create a variabe to represent the application and involk Express()
 var app = express();
@@ -34,14 +37,15 @@ var app = express();
 require('dotenv').config()  // hides the Mongo connection variables
 
 // mongodb connection
-const dbURI = 'mongodb+srv://dbtest:Budda800@cluster0.amkgq.mongodb.net/cubesdb?retryWrites=true&w=majority'
+dbURI = 'mongodb+srv://dbtest:Budda800@cluster0.amkgq.mongodb.net/cubesdb?retryWrites=true&w=majority'
 //console.log(process.env);
 mongoose.connect(dbURI, { 
     dbName: process.env.DB_NAME,
     user: process.env.DB_USER,
     pass: process.env.DB_PASS,
     useNewUrlParser: true, 
-    useUnifiedTopology: true 
+    useUnifiedTopology: true,
+    useFindAndModify: false 
   })
     .then((res) => console.log('db connected!'))
     .catch((err) => console.log(err));
@@ -60,6 +64,15 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
 app.use(cookieParser());
 
+app.use(require('express-session')({
+    secret: process.env.EXP_SESSION_SECRET,
+    resave: false,
+    saveUninitialized: false
+}));
+
+app.use(passport.initialize());
+app.use(passport.session());
+
 app.use(express.static(path.join(__dirname, 'public')));
 
 
@@ -67,6 +80,11 @@ app.use(express.static(path.join(__dirname, 'public')));
 app.use('/', indexRouter);
 app.use('/search', searchRouter);
 app.use('/details', detailsRouter);
+app.use('/register', registerRouter);
+app.use('/login', loginRouter);
+app.use('/logout', logoutRouter);
+
+app.use(ensureAuthenticated);
 
 //protected routes
 app.use('/create', createCubeRouter);
@@ -78,9 +96,9 @@ app.use('/cookie', cookieRouter);
 app.use('/about', aboutRouter);
 
 // passport config
-//passport.use(new LocalStrategy(User.authenticate()));
-//passport.serializeUser(User.serializeUser());
-//passport.deserializeUser(User.deserializeUser());
+passport.use(new LocalStrategy(User.authenticate()));
+passport.serializeUser(User.serializeUser());
+passport.deserializeUser(User.deserializeUser());
 
 // catch 404 and forward to error handler
 app.use(function(req, res, next) {
@@ -95,7 +113,7 @@ app.use(function(err, req, res, next) {
 
   // render the error page
   res.status(err.status || 500);
-  res.render('error');
+  res.render('404');
 });
 
 module.exports = app;
