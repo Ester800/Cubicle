@@ -10,7 +10,7 @@ const User = require('../models/user');
 router.get('/', function(req, res, next) {
     Cube.find()
       .then((response) => {
-      res.render('index', { title: 'Express now with Mongo', cube: response, loggedInUser: req.user });
+      res.render('index', { title: 'Cubicle', cube: response, loggedInUser: req.user });
     })
       .catch((err) => console.log(err));
 });

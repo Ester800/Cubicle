@@ -25,7 +25,7 @@ const userSchema = new Schema({
             message: `must be only letters or numbers!`
         },
         minlength: [8, 'must be 8 or more letters...'],
-        required: [true, 'is required']
+        //required: [true, 'is required']
     },
     cubes: [{ type: Schema.Types.ObjectId, ref: 'Cube' }]
 });
