@@ -7,6 +7,7 @@ const hbs = require('hbs');
 const mongoose = require('mongoose');
 
 const passport = require('passport');
+//const passportSetup = require('./config/passport-setup');
 const LocalStrategy = require('passport-local').Strategy;
 const User = require('./models/user');
 
@@ -37,7 +38,7 @@ var app = express();
 require('dotenv').config()  // hides the Mongo connection variables
 
 // mongodb connection
-dbURI = 'mongodb+srv://dbtest:Budda800@cluster0.amkgq.mongodb.net/cubesdb?retryWrites=true&w=majority'
+const dbURI = 'mongodb+srv://dbtest:Budda800@cluster0.amkgq.mongodb.net/cubesdb?retryWrites=true&w=majority'
 //console.log(process.env);
 mongoose.connect(dbURI, { 
     dbName: process.env.DB_NAME,
@@ -83,6 +84,7 @@ app.use('/details', detailsRouter);
 app.use('/register', registerRouter);
 app.use('/login', loginRouter);
 app.use('/logout', logoutRouter);
+app.use('/about', aboutRouter);
 
 app.use(ensureAuthenticated);
 
@@ -93,7 +95,7 @@ app.use('/accessory/attach', attachAccessoryRouter);
 app.use('/edit', editRouter);
 app.use('/delete', deleteRouter);
 app.use('/cookie', cookieRouter);
-app.use('/about', aboutRouter);
+
 
 // passport config
 passport.use(new LocalStrategy(User.authenticate()));
